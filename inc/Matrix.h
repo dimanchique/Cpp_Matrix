@@ -41,6 +41,12 @@ public:
     [[nodiscard]] int GetNumOfColumns() const { return columns; }
     [[nodiscard]] float Determinant() const;
 
+    static Matrix ReplaceRow(Matrix matrix, int num_row, std::vector<float> &new_row);
+    void ReplaceRow(int num_row, std::vector<float> &new_row);
+    static Matrix ReplaceColumn(Matrix matrix, int num_column, std::vector<float> &new_column);
+    void ReplaceColumn(int num_column, std::vector<float> &new_column);
+    bool Solve(std::vector<float> &solution, std::vector<float> &out_roots);
+
     Matrix operator+(const Matrix &other) const;
     Matrix operator-(const Matrix &other) const;
     Matrix operator*(const Matrix &other) const;
@@ -50,8 +56,6 @@ public:
     Matrix &operator*=(const Matrix &other);
     Matrix &operator/=(const Matrix &other);
 
-    bool operator==(const Matrix &other) const;
-
     Matrix operator+(float Value) const;
     Matrix operator-(float Value) const;
     Matrix operator*(float Value) const;
@@ -60,4 +64,6 @@ public:
     Matrix &operator-=(float Value);
     Matrix &operator*=(float Value);
     Matrix &operator/=(float Value);
+
+    bool operator==(const Matrix &other) const;
 };

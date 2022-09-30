@@ -226,6 +226,51 @@ float Matrix::Determinant() const {
     return det;
 }
 
+Matrix Matrix::ReplaceRow(Matrix matrix, int num_row, std::vector<float> &new_row) {
+    matrix.ReplaceRow(num_row, new_row);
+    return matrix;
+}
+
+void Matrix::ReplaceRow(int num_row, std::vector<float> &new_row) {
+    assert(new_row.size() == columns);
+    assert(num_row <= rows);
+    matrix[num_row] = new_row;
+}
+
+Matrix Matrix::ReplaceColumn(Matrix matrix, int num_column, std::vector<float> &new_column) {
+    matrix.ReplaceColumn(num_column, new_column);
+    return matrix;
+}
+
+void Matrix::ReplaceColumn(int num_column, std::vector<float> &new_column) {
+    assert(new_column.size() == rows);
+    assert(num_column <= columns);
+    for (int i = 0; i < rows; i++)
+        for (int j = 0; j < columns; j++)
+            if (j == num_column)
+                matrix[i][j] = new_column[i];
+}
+
+bool Matrix::Solve(std::vector<float> &solution, std::vector<float> &out_roots) {
+    assert(solution.size() == rows);
+    float D = Determinant();
+    std::vector<float> Ds{};
+
+    if (D*D < 0.001) return false; //squared Det to check near zero values
+
+    out_roots.clear();
+    for (int j = 0; j < columns; j++)
+    {
+        auto temp = Copy();
+        temp.ReplaceColumn(j, solution);
+        Ds.emplace_back(temp.Determinant());
+    }
+    for (auto &Det : Ds)
+        out_roots.emplace_back(Det/D);
+
+    return true;
+}
+
 Matrix Matrix::operator+(const Matrix &other) const {
     Matrix temp(*this);
     temp += other;
