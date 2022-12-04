@@ -1,13 +1,13 @@
 #include "Matrix.h"
 
 int main() {
-    auto Mat = Matrix();
-    Mat.SetData({{2, 1, 1},
-                 {1, -1, 0},
-                 {3, -1, 2}});
-    Mat.PrintMatrix();
-    std::vector<float> roots;
-    std::vector<float> solutions {2, -2, 2};
-    Mat.Solve(solutions, roots);
+    auto Mat = Matrix(3,3);
+    Mat.SetData({{1, 0, 0},
+                 {0, 1, 2},
+                 {0, 0, 1}});
+    const auto b1 = Mat.IsIdentityMatrix();
+    const auto b2 = Mat.IsUpperTriangleMatrix();
+    const auto b3 = Mat.IsLowerTriangleMatrix();
+    const auto b4 = Mat.IsDiagonalMatrix();
     return 0;
 }
