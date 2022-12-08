@@ -2,6 +2,7 @@
 
 #include "ProxyVector.h"
 #include "vector"
+#include "Timer.h"
 #include <cassert>
 
 #define DEBUG
@@ -34,7 +35,6 @@ public:
     [[nodiscard]] int GetColumns() const { return columns; }
     void SetData(const std::vector<std::vector<float>> &Data);
     void SetData(const std::vector<ProxyVector> &Data);
-    [[nodiscard]] std::vector<ProxyVector> GetData() const { return matrix; }
 
     void T();
     void Inverse();

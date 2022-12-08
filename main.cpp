@@ -2,12 +2,11 @@
 
 int main() {
     auto Mat = Matrix(3,3);
-    Mat.SetData({{1, 0, 0},
-                 {0, 1, 2},
-                 {0, 0, 1}});
-    const auto b1 = Mat.IsIdentityMatrix();
-    const auto b2 = Mat.IsUpperTriangleMatrix();
-    const auto b3 = Mat.IsLowerTriangleMatrix();
-    const auto b4 = Mat.IsDiagonalMatrix();
+    Mat.SetData({{5, -1, -1},
+                 {1, 2, 3},
+                 {4, 3, 2}});
+    std::vector<float> solution = {0, 14, 16};
+    std::vector<float> out;
+    Mat.Solve(solution, out);
     return 0;
 }

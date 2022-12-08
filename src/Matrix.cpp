@@ -4,72 +4,102 @@
 
 Matrix::Matrix() {
 #ifdef DEBUG
-    printf("Empty matrix was created. ADDR: 0x%x\n", this);
+   std::cout << "Empty matrix was created. ADDR: " << this << "\n";
 #endif
 }
 
 Matrix::Matrix(const std::vector<std::vector<float>> &Data) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Matrix(const std::vector<std::vector<float>> &Data)");
+#endif
     SetData(Data);
 }
 
 Matrix::Matrix(const std::vector<ProxyVector> &Data) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Matrix(const std::vector<ProxyVector> &Data)");
+#endif
     SetData(Data);
 }
 
 Matrix::Matrix(int num_rows, int num_columns) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Matrix(int num_rows, int num_columns)");
+#endif
     AllocMatrixData(num_rows, num_columns);
 #ifdef DEBUG
-    printf("Matrix was created. ADDR: 0x%x\n", this);
-    printf("Reserved space: Rows: %d, Columns: %d\n", rows, columns);
+    std::cout << "Matrix was created. ADDR: " << this << "\n";
+    std::cout << "Reserved space: " << rows << " rows, " << columns << " columns\n";
 #endif
 }
 
 Matrix::~Matrix() {
+#ifdef DEBUG
+    auto t = Timer("Matrix::~Matrix()");
+#endif
     DeallocMatrixData();
 #ifdef DEBUG
-    printf("Matrix was deleted. ADDR: 0x%x\n", this);
+    std::cout << "Matrix was deleted. ADDR: " << this << "\n";
 #endif
 }
 
 Matrix Matrix::Copy() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Copy()");
+#endif
     auto temp = Matrix(*this);
 #ifdef DEBUG
-    printf("Copied matrix from 0x%x to 0x%x\n", this, &temp);
+    std::cout << "Copied matrix from " << this << " to " << &temp << "\n";
 #endif
     return temp;
 }
 
 void Matrix::AllocMatrixData(int num_rows, int num_columns) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::AllocMatrixData(int num_rows, int num_columns)");
+#endif
     DeallocMatrixData();
     rows = num_rows;
     columns = num_columns;
     for (int i = 0; i < rows; i++)
         matrix.emplace_back(columns);
 #ifdef DEBUG
-    printf("Memory for matrix data was allocated. ADDR: 0x%x\n", &matrix);
+    std::cout << "Memory for matrix data was allocated. ADDR: " << &matrix << "\n";
 #endif
 }
 
 void Matrix::DeallocMatrixData() {
+#ifdef DEBUG
+    auto t = Timer("Matrix::DeallocMatrixData()");
+#endif
     matrix.clear();
     rows = 0;
     columns = 0;
 #ifdef DEBUG
-    printf("Memory for matrix was deallocated. ADDR: 0x%x\n", &matrix);
+    std::cout << "Memory for matrix was deallocated. ADDR: " << &matrix << "\n";
 #endif
 }
 
 void Matrix::SetRow(const std::vector<float> &Data, int n) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetRow(const std::vector<float> &Data, int n)");
+#endif
     assert(n < rows);
     matrix[n] = Data;
 }
 
 void Matrix::SetRow(const ProxyVector &Data, int n) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetRow(const ProxyVector &Data, int n)");
+#endif
     assert(n < rows);
     matrix[n] = Data;
 }
 
 void Matrix::SetColumn(const std::vector<float> &Data, int n) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetColumn(const std::vector<float> &Data, int n)");
+#endif
     assert(n < columns);
     for(int i = 0; i < columns; i++){
         matrix[i][n] = Data[i];
@@ -77,6 +107,9 @@ void Matrix::SetColumn(const std::vector<float> &Data, int n) {
 }
 
 void Matrix::SetColumn(const ProxyVector &Data, int n) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetColumn(const ProxyVector &Data, int n)");
+#endif
     assert(n < columns);
     for(int i = 0; i < columns; i++){
         matrix[i][n] = Data[i];
@@ -84,6 +117,9 @@ void Matrix::SetColumn(const ProxyVector &Data, int n) {
 }
 
 void Matrix::SetData(const std::vector<std::vector<float>> &Data) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetData(const std::vector<std::vector<float>> &Data)");
+#endif
     DeallocMatrixData();
     for (int i = 0; i < Data.size(); i++) {
         matrix.emplace_back();
@@ -92,11 +128,14 @@ void Matrix::SetData(const std::vector<std::vector<float>> &Data) {
         rows++;
     }
 #ifdef DEBUG
-    printf("Matrix data was loaded. Rows: %d, Columns: %d\n", rows, columns);
+    std::cout << "Matrix data was loaded: " << rows << " rows, " << columns << " columns\n";
 #endif
 }
 
 void Matrix::SetData(const std::vector<ProxyVector> &Data) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::SetData(const std::vector<ProxyVector> &Data)");
+#endif
     DeallocMatrixData();
     for (int i = 0; i < Data.size(); i++) {
         matrix.emplace_back();
@@ -105,11 +144,14 @@ void Matrix::SetData(const std::vector<ProxyVector> &Data) {
         rows++;
     }
 #ifdef DEBUG
-    printf("Matrix data was loaded. Rows: %d, Columns: %d\n", rows, columns);
+    std::cout << "Matrix data was loaded: " << rows << " rows, " << columns << " columns\n";
 #endif
 }
 
 void Matrix::T() {
+#ifdef DEBUG
+    auto t = Timer("Matrix::T()");
+#endif
     auto temp = Copy();
     AllocMatrixData(temp.columns, temp.rows);
     for (int i = 0; i < columns; i++)
@@ -118,6 +160,9 @@ void Matrix::T() {
 }
 
 void Matrix::Inverse() {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Inverse()");
+#endif
     float det = Determinant();
     if (fabsf(det) < 0.00005f) //epsilon
     {
@@ -149,6 +194,9 @@ void Matrix::Inverse() {
 }
 
 void Matrix::TrimMatrixRow(int row) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::TrimMatrixRow(int row)");
+#endif
     if (row >= matrix.size()) {
         printf("Row %d doesn't exist\n", row);
         return;
@@ -158,6 +206,9 @@ void Matrix::TrimMatrixRow(int row) {
 }
 
 void Matrix::TrimMatrixColumn(int column) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::TrimMatrixColumn(int column)");
+#endif
     for (auto &row: matrix) {
         if (column >= row.size()) {
             printf("Column %d doesn't exist\n", column);
@@ -169,11 +220,17 @@ void Matrix::TrimMatrixColumn(int column) {
 }
 
 void Matrix::TrimMatrix(int row, int column) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::TrimMatrix(int row, int column)");
+#endif
     TrimMatrixRow(row);
     TrimMatrixColumn(column);
 }
 
 void Matrix::Reshape(int num_rows, int num_columns) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Reshape(int num_rows, int num_columns)");
+#endif
     assert(rows * columns == num_rows * num_columns);
     Matrix temp = Copy();
     AllocMatrixData(num_rows, num_columns);
@@ -192,12 +249,18 @@ void Matrix::Reshape(int num_rows, int num_columns) {
 }
 
 void Matrix::ReplaceRow(const int num_row, const std::vector<float> &new_row) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::ReplaceRow(const int num_row, const std::vector<float> &new_row)");
+#endif
     assert(new_row.size() == columns);
     assert(num_row <= rows);
     matrix[num_row] = new_row;
 }
 
 void Matrix::ReplaceColumn(int num_column, std::vector<float> &new_column) {
+#ifdef DEBUG
+    auto t = Timer("Matrix::ReplaceColumn(int num_column, std::vector<float> &new_column)");
+#endif
     assert(new_column.size() == rows);
     assert(num_column <= columns);
     for (int i = 0; i < rows; i++)
@@ -207,6 +270,9 @@ void Matrix::ReplaceColumn(int num_column, std::vector<float> &new_column) {
 }
 
 bool Matrix::IsDiagonalMatrix() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::IsDiagonalMatrix()");
+#endif
     if (rows != columns)
     {
 #ifdef DEBUG
@@ -224,6 +290,9 @@ bool Matrix::IsDiagonalMatrix() const {
 }
 
 bool Matrix::IsUpperTriangleMatrix() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::IsUpperTriangleMatrix()");
+#endif
     if (rows != columns)
     {
 #ifdef DEBUG
@@ -241,6 +310,9 @@ bool Matrix::IsUpperTriangleMatrix() const {
 }
 
 bool Matrix::IsLowerTriangleMatrix() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::IsLowerTriangleMatrix()");
+#endif
     if (rows != columns)
     {
 #ifdef DEBUG
@@ -258,6 +330,9 @@ bool Matrix::IsLowerTriangleMatrix() const {
 }
 
 bool Matrix::IsIdentityMatrix() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::IsIdentityMatrix()");
+#endif
     if (rows != columns)
     {
 #ifdef DEBUG
@@ -325,6 +400,9 @@ void Matrix::PrintMatrix() {
 }
 
 float Matrix::Determinant() const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Determinant()");
+#endif
     assert(rows == columns);
     if (rows == 1)
         return matrix[0][0];
@@ -344,6 +422,9 @@ float Matrix::Determinant() const {
 }
 
 bool Matrix::Solve(std::vector<float> &solution, std::vector<float> &out_roots) const {
+#ifdef DEBUG
+    auto t = Timer("Matrix::Solve(std::vector<float> &solution, std::vector<float> &out_roots)");
+#endif
     assert(solution.size() == rows);
     float D = Determinant();
     std::vector<float> Ds{};
