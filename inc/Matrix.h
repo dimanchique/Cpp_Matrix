@@ -2,10 +2,15 @@
 
 #include "ProxyVector.h"
 #include "vector"
-#include "Timer.h"
 #include <cassert>
 
 //#define DEBUG
+
+#ifndef DEBUG
+#include "iostream"
+#else
+#include "Timer.h"
+#endif
 
 template<typename Type>
 class Matrix {
@@ -16,11 +21,7 @@ private:
     std::vector<ProxyVector<Type>> matrix{};
 
 public:
-    Matrix(){
-#ifdef DEBUG
-        std::cout << "Empty matrix was created. ADDR: " << this << "\n";
-#endif
-    }
+    Matrix() = default;
     
     explicit Matrix(const std::vector<std::vector<Type>> &Data){
 #ifdef DEBUG
@@ -217,7 +218,7 @@ public:
         auto t = Timer("Matrix::TrimMatrixRow(int row)");
 #endif
         if (row >= matrix.size()) {
-            printf("Row %d doesn't exist\n", row);
+            std::cout << "Row " << row << " doesn't exist\n";
             return;
         }
         matrix.erase(matrix.begin() + row);
@@ -230,7 +231,7 @@ public:
 #endif
         for (auto &row: matrix) {
             if (column >= row.size()) {
-                printf("Column %d doesn't exist\n", column);
+                std::cout << "Row " << column << " doesn't exist\n";
                 return;
             }
             row.erase(column);
@@ -409,13 +410,13 @@ public:
     }
 
     void PrintMatrix(){
-        printf("\nPrinting matrix. Rows: %d, Columns: %d\n", rows, columns);
+        std::cout << "\nPrinting matrix. Rows: " << rows << " Columns: " << columns <<"\n";
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++)
-                printf("%f ", matrix[i][j]);
-            printf("\n");
+                std::cout << matrix[i][j];
+            std::cout << "\n";
         }
-        printf("\n");
+        std::cout << "\n";
     }
     
     [[nodiscard]] float Determinant() const{
