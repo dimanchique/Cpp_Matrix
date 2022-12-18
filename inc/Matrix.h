@@ -756,9 +756,3 @@ inline Matrix<Type> operator-(const T Value, const Matrix<Type> &other)
 {
     return other.operator-(Value);
 }
-
-template<typename T, typename Type>
-inline Matrix<Type> operator*(const T Value, const Matrix<Type> &other)
-{
-    return other.operator*(Value);
-}
