@@ -33,7 +33,13 @@ struct Timer{
 #endif
 
 template<typename Type>
+class Matrix;
+
+template<typename Type>
 class ProxyVector {
+
+    friend class Matrix<Type>;
+
 private:
     std::vector<Type> data{};
 
@@ -54,19 +60,74 @@ public:
         return *this;
     }
 
-    bool operator==(const ProxyVector &InVector) const{
-        bool SizeEquality = size() == InVector.size();
-        bool ValuesEquality = true;
-        for (int i = 0; i < size(); i++)
-            if (data[i] != InVector[i]) {
-                ValuesEquality = false;
-                break;
-            }
-        return SizeEquality && ValuesEquality;
+    template<typename T>
+    ProxyVector operator+(const T &other) const {
+        ProxyVector temp(*this);
+        temp += other;
+        return temp;
     }
 
-    bool operator!=(const ProxyVector &InVector) const{
-        return *this != InVector;
+    template<typename T>
+    ProxyVector operator-(const T &other) const {
+        ProxyVector temp(*this);
+        temp += other;
+        return temp;
+    }
+
+    template<typename T>
+    ProxyVector operator*(const T &value) const {
+        ProxyVector temp(*this);
+        temp *= value;
+        return temp;
+    }
+
+    template<typename T>
+    ProxyVector operator/(const T &value) const {
+        ProxyVector temp(*this);
+        temp /= value;
+        return temp;
+    }
+
+    ProxyVector &operator+=(const ProxyVector &other) {
+        assert(size() == other.size());
+        for (int i = 0; i < size(); i++)
+            data[i] += other[i];
+        return *this;
+    }
+
+    ProxyVector &operator-=(const ProxyVector &other) {
+        assert(size() == other.size());
+        for (int i = 0; i < size(); i++)
+            data[i] -= other[i];
+        return *this;
+    }
+
+    template<typename T>
+    ProxyVector &operator+=(const T &value) {
+        for (auto &element : data)
+            element += value;
+        return *this;
+    }
+
+    template<typename T>
+    ProxyVector &operator-=(const T &value) {
+        for (auto &element : data)
+            element -= value;
+        return *this;
+    }
+
+    template<typename T>
+    ProxyVector &operator*=(const T &value) {
+        for (Type &element : data)
+            element *= value;
+        return *this;
+    }
+
+    template<typename T>
+    ProxyVector &operator/=(const T &value) {
+        for (auto &element : data)
+            element /= value;
+        return *this;
     }
 
     bool operator==(const std::vector<Type> &InVector) const{
@@ -81,7 +142,15 @@ public:
     }
 
     bool operator!=(const std::vector<Type> &InVector) const{
-        return *this != InVector;
+        return !(*this->operator==(InVector));
+    }
+
+    bool operator==(const ProxyVector &InVector) const{
+        return *this->operator==(InVector.data);
+    }
+
+    bool operator!=(const ProxyVector &InVector) const{
+        return !(*this->operator==(InVector.data));
     }
 
     Type &operator[](const int idx){
@@ -547,25 +616,29 @@ public:
         return true;
     }
 
-    Matrix operator+(const Matrix &other) const {
+    template<typename T>
+    Matrix operator+(const T &other) const {
         Matrix temp(*this);
         temp += other;
         return temp;
     }
 
-    Matrix operator-(const Matrix &other) const {
+    template<typename T>
+    Matrix operator-(const T &other) const {
         Matrix temp(*this);
         temp -= other;
         return temp;
     }
 
-    Matrix operator*(const Matrix &other) const {
+    template<typename T>
+    Matrix operator*(const T &other) const {
         Matrix temp(*this);
         temp *= other;
         return temp;
     }
 
-    Matrix operator/(const Matrix &other) const {
+    template<typename T>
+    Matrix operator/(const T &other) const {
         Matrix temp(*this);
         temp /= other;
         return temp;
@@ -574,16 +647,14 @@ public:
     Matrix &operator+=(const Matrix &other) {
         assert(columns == other.columns && rows == other.rows);
         for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] += other.matrix[i][j];
+            matrix[i] += other.matrix[i];
         return *this;
     }
 
     Matrix &operator-=(const Matrix &other) {
         assert(columns == other.columns && rows == other.rows);
         for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] -= other.matrix[i][j];
+            matrix[i] -= other.matrix[i];
         return *this;
     }
 
@@ -608,56 +679,31 @@ public:
         return *this;
     }
 
-    Matrix operator+(float Value) const {
-        Matrix temp(*this);
-        temp += Value;
-        return temp;
-    }
-
-    Matrix operator-(float Value) const {
-        Matrix temp(*this);
-        temp -= Value;
-        return temp;
-    }
-
-    Matrix operator*(float Value) const {
-        Matrix temp(*this);
-        temp *= Value;
-        return temp;
-    }
-
-    Matrix operator/(float Value) const {
-        Matrix temp(*this);
-        temp /= Value;
-        return temp;
-    }
-
-    Matrix &operator+=(float Value) {
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] += Value;
+    template<typename T>
+    Matrix &operator+=(const T value) {
+        for (auto &line : matrix)
+            line += value;
         return *this;
     }
 
-    Matrix &operator-=(float Value) {
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] -= Value;
+    template<typename T>
+    Matrix &operator-=(const T value) {
+        for (auto &line : matrix)
+            line -= value;
         return *this;
     }
 
-    Matrix &operator*=(float Value) {
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] *= Value;
+    template<typename T>
+    Matrix &operator*=(const T value) {
+        for (ProxyVector<Type> &line : matrix)
+            line *= value;
         return *this;
     }
 
-    Matrix &operator/=(float Value) {
-        assert(Value != 0.0f);
-        for (int i = 0; i < rows; i++)
-            for (int j = 0; j < rows; j++)
-                matrix[i][j] /= Value;
+    template<typename T>
+    Matrix &operator/=(const T value) {
+        for (auto &line : matrix)
+            line /= value;
         return *this;
     }
 
@@ -665,11 +711,15 @@ public:
         bool SizeEquality = columns == other.columns && rows == other.rows;
         bool ValuesEquality = true;
         for (int i = 0; i < rows; i++)
-            if (matrix[i] != other.matrix[i]) {
+            if (matrix[i] != other[i]) {
                 ValuesEquality = false;
                 break;
             }
         return SizeEquality && ValuesEquality;
+    }
+
+    bool operator!=(Matrix &other) const {
+        return !(*this->operator==(other));
     }
 
     template<typename NewType>
@@ -695,14 +745,20 @@ public:
     }
 };
 
-template<typename Type>
-inline Matrix<Type> operator*(float Value, const Matrix<Type> &other)
+template<typename T, typename Type>
+inline Matrix<Type> operator+(const T Value, const Matrix<Type> &other)
 {
-    return other.operator*(Value);
+    return other.operator+(Value);
 }
 
-template<typename Type>
-inline Matrix<Type> operator/(float Value, const Matrix<Type> &other)
+template<typename T, typename Type>
+inline Matrix<Type> operator-(const T Value, const Matrix<Type> &other)
 {
-    return other.operator/(Value);
+    return other.operator-(Value);
+}
+
+template<typename T, typename Type>
+inline Matrix<Type> operator*(const T Value, const Matrix<Type> &other)
+{
+    return other.operator*(Value);
 }
