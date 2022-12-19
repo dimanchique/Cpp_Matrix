@@ -630,6 +630,12 @@ public:
         return temp;
     }
 
+    Matrix operator-() const {
+        Matrix temp(*this);
+        temp *= -1;
+        return temp;
+    }
+
     template<typename T>
     Matrix operator*(const T &other) const {
         Matrix temp(*this);
@@ -748,11 +754,17 @@ public:
 template<typename T, typename Type>
 inline Matrix<Type> operator+(const T Value, const Matrix<Type> &other)
 {
-    return other.operator+(Value);
+    return other + Value;
 }
 
 template<typename T, typename Type>
 inline Matrix<Type> operator-(const T Value, const Matrix<Type> &other)
 {
-    return other.operator-(Value);
+    return -other + Value;
+}
+
+template<typename T, typename Type>
+inline Matrix<Type> operator*(const T Value, const Matrix<Type> &other)
+{
+    return other * Value;
 }

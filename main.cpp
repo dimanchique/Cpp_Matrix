@@ -3,5 +3,6 @@
 int main() {
     auto M = Matrix<float>({{1, 2, 3, 4}});
     auto S = 3 * M / 2;
+    auto s = -M;
     return 0;
 }
