@@ -150,7 +150,7 @@ public:
     }
 
     bool operator!=(const ProxyVector &InVector) const{
-        return !(*this->operator==(InVector.data));
+        return !(*this==(InVector.data));
     }
 
     Type &operator[](const int idx){
@@ -682,7 +682,7 @@ public:
         temp.Inverse();
         Matrix origin(*this);
         origin *= temp;
-        return *this;
+        return origin;
     }
 
     template<typename T>
@@ -751,20 +751,8 @@ public:
     }
 };
 
-template<typename T, typename Type>
-inline Matrix<Type> operator+(const T Value, const Matrix<Type> &other)
-{
-    return other + Value;
-}
-
-template<typename T, typename Type>
-inline Matrix<Type> operator-(const T Value, const Matrix<Type> &other)
-{
-    return -other + Value;
-}
-
-template<typename T, typename Type>
-inline Matrix<Type> operator*(const T Value, const Matrix<Type> &other)
+template<typename Type>
+inline Matrix<Type> operator*(const float Value, const Matrix<Type> &other)
 {
     return other * Value;
 }
